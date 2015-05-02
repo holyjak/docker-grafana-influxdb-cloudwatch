@@ -1,6 +1,9 @@
 #! /bin/bash
 
-docker stop grafana-influxdb_con
-docker rm grafana-influxdb_con
+docker stop grafana-influxdb_con &>/dev/null
+docker rm grafana-influxdb_con &>/dev/null
 
-docker run -d -v /etc/localtime:/etc/localtime:ro -p 80:80 -p 8083:8083 -p 8084:8084 -p 8086:8086 --name grafana-influxdb_con grafana_influxdb
+## Linux:
+#docker run -d -v /etc/localtime:/etc/localtime:ro -p 80:80 -p 8083:8083 -p 8084:8084 -p 8086:8086 --name grafana-influxdb_con monitoring3
+## OS X:
+docker run -d -p 80:80 -p 8083:8083 -p 8084:8084 -p 8086:8086 --name grafana-influxdb_con monitoring3

@@ -1,4 +1,4 @@
-FROM	ubuntu:14.04
+FROM phusion/baseimage:0.9.16
 
 ENV GRAFANA_VERSION 1.9.1
 ENV INFLUXDB_VERSION 0.8.8
@@ -14,12 +14,7 @@ RUN		apt-get -y update && apt-get -y upgrade
 # ---------------- #
 
 # Install all prerequisites
-RUN 	apt-get -y install wget nginx-light supervisor curl
-
-#RUN 	apt-get -y install software-properties-common
-#RUN		add-apt-repository -y ppa:chris-lea/node.js && apt-get -y update
-#RUN		apt-get -y install python-django-tagging python-simplejson python-memcache python-ldap python-cairo \
-#			python-pysqlite2 python-support python-pip gunicorn nodejs git openjdk-7-jre build-essential python-dev
+RUN 	apt-get -y install wget nginx-light curl
 
 # Install Grafana to /src/grafana
 RUN		mkdir -p src/grafana && cd src/grafana && \
@@ -29,14 +24,14 @@ RUN		mkdir -p src/grafana && cd src/grafana && \
 # Install InfluxDB
 RUN		wget http://s3.amazonaws.com/influxdb/influxdb_${INFLUXDB_VERSION}_amd64.deb && \
 			dpkg -i influxdb_${INFLUXDB_VERSION}_amd64.deb && rm influxdb_${INFLUXDB_VERSION}_amd64.deb
- 
+
 # ----------------- #
 #   Configuration   #
 # ----------------- #
 
 # Configure InfluxDB
-ADD		influxdb/config.toml /etc/influxdb/config.toml 
-ADD		influxdb/run.sh /usr/local/bin/run_influxdb
+ADD		influxdb/config.toml /etc/influxdb/config.toml
+ADD		influxdb/run.sh /etc/service/influxdb/run
 # These two databases have to be created. These variables are used by set_influxdb.sh and set_grafana.sh
 ENV		PRE_CREATE_DB data grafana
 ENV		INFLUXDB_DATA_USER data
@@ -52,11 +47,11 @@ ADD		./grafana/config.js /src/grafana/config.js
 ADD		./configure.sh /configure.sh
 ADD		./set_grafana.sh /set_grafana.sh
 ADD		./set_influxdb.sh /set_influxdb.sh
-RUN 		/configure.sh
+RUN 	/configure.sh
 
-# Configure nginx and supervisord
+# Configure nginx (that serves Grafana)
+ADD		./nginx/run.sh /etc/service/nginx/run
 ADD		./nginx/nginx.conf /etc/nginx/nginx.conf
-ADD		./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # ----------- #
 #   Cleanup   #
@@ -85,5 +80,4 @@ EXPOSE	8084
 # -------- #
 #   Run!   #
 # -------- #
-
-CMD		["/usr/bin/supervisord"]
+CMD /sbin/my_init
