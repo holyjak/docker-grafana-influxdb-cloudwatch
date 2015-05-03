@@ -53,6 +53,30 @@ RUN 	/configure.sh
 ADD		./nginx/run.sh /etc/service/nginx/run
 ADD		./nginx/nginx.conf /etc/nginx/nginx.conf
 
+
+# -------------- #
+#   CloudWatch   #
+# -------------- #
+
+# Add a script run automatically at startup that creates /docker.env
+# so that the Cron job can access the AWS credentials env variables
+ADD cloudwatch/env2file /etc/my_init.d/env2file
+
+RUN apt-get -y install python-pip
+
+RUN pip install --global-option="--without-libyaml" PyYAML
+# ^- libyaml seems to be unavailable here; cloudwatch dependency
+RUN pip install cloudwatch-to-graphite==0.5.0
+
+ADD cloudwatch/leadbutt-cloudwatch.conf /etc/leadbutt-cloudwatch.conf
+ADD cloudwatch/leadbutt-cloudwatch-cron.conf /etc/cron.d/leadbutt-cloudwatch
+# TODO(improvement) use crontab fragments in /etc/cron.d/ instead of using root's crontab
+#                     See for other tips: http://stackoverflow.com/questions/26822067/running-cron-python-jobs-within-docker
+RUN crontab /etc/cron.d/leadbutt-cloudwatch
+
+# Note: AWS cedentials should be provided via ENV vars; ex.:
+#     docker run -e AWS_ACCESS_KEY_ID=xxxx -e AWS_SECRET_ACCESS_KEY=yyyy ...
+
 # ----------- #
 #   Cleanup   #
 # ----------- #

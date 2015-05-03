@@ -23,7 +23,7 @@ port     = 8086    # binding is disabled if the port isn't set
 # ssl-port = 8084    # SSL support is enabled if you set a port and cert
 # ssl-cert = "/path/to/cert.pem"
 
-# connections will timeout after this amount of time. Ensures that clients that misbehave 
+# connections will timeout after this amount of time. Ensures that clients that misbehave
 # and keep alive connections they don't use won't end up connection a million times.
 # However, if a request is taking longer than this to complete, could be a problem.
 read-timeout = "5s"
@@ -32,9 +32,9 @@ read-timeout = "5s"
 
   # Configure the graphite api
   [input_plugins.graphite]
-  enabled = false
-  # port = 2003
-  # database = ""  # store graphite data in this database
+  enabled = true
+  port = 2003
+  database = "data"  # store graphite data in this database
 
 # Raft configuration
 [raft]
