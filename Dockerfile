@@ -1,5 +1,6 @@
 FROM phusion/baseimage:0.9.16
 
+# TODO Update Grafana to 2.0.2; consider using .deb installer?
 ENV GRAFANA_VERSION 1.9.1
 ENV INFLUXDB_VERSION 0.8.8
 
@@ -84,6 +85,15 @@ RUN crontab /etc/cron.d/leadbutt-cloudwatch
 RUN		apt-get autoremove -y wget curl && \
 			apt-get -y clean && \
 			rm -rf /var/lib/apt/lists/* && rm /*.sh
+
+# ----------- #
+#   Volumes   #
+# ----------- #
+
+ADD configure_influxdb_at_run.sh /etc/my_init.d/configure_influxdb_at_run.sh
+RUN cp -r /var/easydeploy/share /var/infuxdb_initial_data_backup
+# influxdb data dir:
+VOLUME ["/var/easydeploy/share"]
 
 # ---------------- #
 #   Expose Ports   #
