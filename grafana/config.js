@@ -3,7 +3,7 @@
 // must be set before Grafana is run for the first time.
 
 define(['settings'], function(Settings) {
-  
+
 
   return new Settings({
 
@@ -17,17 +17,17 @@ define(['settings'], function(Settings) {
       */
 
       // InfluxDB example setup (the InfluxDB databases specified need to exist)
-      
+
       datasources: {
         data: {
           type: 'influxdb',
-          url: "http://localhost:8086/db/data",
+          url: "/db/data",
           username: '<--DATA_USER-->',
           password: '<--DATA_PW-->',
         },
         grafana: {
           type: 'influxdb',
-          url: "http://localhost:8086/db/grafana",
+          url: "/db/grafana",
           username: '<--GRAFANA_USER-->',
           password: '<--GRAFANA_PW-->',
           grafanaDB: true
@@ -73,6 +73,3 @@ define(['settings'], function(Settings) {
 
     });
 });
-
-
-
