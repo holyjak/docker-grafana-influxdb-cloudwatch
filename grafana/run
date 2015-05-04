@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -m
+
+echo "=> Starting Grafana ..."
+cd /usr/share/grafana
+exec /usr/sbin/grafana-server -config=/etc/grafana/grafana.ini

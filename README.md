@@ -23,3 +23,8 @@ Regarding cloudwatch-to-graphite and its `leadbutt` command-line:
     `docker run -e AWS_ACCESS_KEY_ID=xxxx -e AWS_SECRET_ACCESS_KEY=yyyy ...` (see `./start`)
 
 [1]: https://github.com/kamon-io/docker-grafana-influxdb
+
+
+### Defaults
+
+Grafana user: admin/admin

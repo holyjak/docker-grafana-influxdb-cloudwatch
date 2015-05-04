@@ -7,5 +7,6 @@ docker rm grafana-influxdb_con &>/dev/null
 #docker run -d -v /etc/localtime:/etc/localtime:ro -p 80:80 -p 8083:8083 -p 8084:8084 -p 8086:8086 --name grafana-influxdb_con monitoring3
 ## OS X:
 #
+# TODO: Do we need -e "GF_SERVER_ROOT_URL=http://grafana.server.name" ?
 docker run  -e AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" -d -p 80:80 -p 8083:8083 -p 8084:8084 -p 8086:8086 --name grafana-influxdb_con grafana_influxdb
 #-v $PWD/vol_data:/var/easydeploy/share # BROKEN under OS X due to boot2docker/VirtualBox & permission on mounts issues

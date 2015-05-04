@@ -1,7 +1,6 @@
 FROM phusion/baseimage:0.9.16
 
-# TODO Update Grafana to 2.0.2; consider using .deb installer?
-ENV GRAFANA_VERSION 1.9.1
+ENV GRAFANA_VERSION 2.0.2
 ENV INFLUXDB_VERSION 0.8.8
 
 # Prevent some error messages
@@ -17,10 +16,11 @@ RUN		apt-get -y update && apt-get -y upgrade
 # Install all prerequisites
 RUN 	apt-get -y install wget nginx-light curl
 
-# Install Grafana to /src/grafana
-RUN		mkdir -p src/grafana && cd src/grafana && \
-			wget http://grafanarel.s3.amazonaws.com/grafana-${GRAFANA_VERSION}.tar.gz -O grafana.tar.gz && \
-			tar xzf grafana.tar.gz --strip-components=1 && rm grafana.tar.gz
+# Install Grafana to /usr/share/grafana; see https://github.com/grafana/grafana-docker/blob/master/Dockerfile
+RUN apt-get -y install libfontconfig
+RUN wget http://grafanarel.s3.amazonaws.com/builds/grafana_${GRAFANA_VERSION}_amd64.deb  -O grafana_amd64.deb
+RUN dpkg -i grafana_amd64.deb
+ADD grafana/run /etc/service/grafana/run
 
 # Install InfluxDB
 RUN		wget http://s3.amazonaws.com/influxdb/influxdb_${INFLUXDB_VERSION}_amd64.deb && \
@@ -42,6 +42,8 @@ ENV		INFLUXDB_GRAFANA_PW grafana
 ENV		ROOT_PW root
 
 # Configure Grafana
+ADD grafana/grafana.ini /etc/grafana/grafana.ini
+# TODO config.js is deprecated
 ADD		./grafana/config.js /src/grafana/config.js
 #ADD	./grafana/scripted.json /src/grafana/app/dashboards/default.json
 
@@ -95,6 +97,9 @@ RUN cp -r /var/easydeploy/share /var/infuxdb_initial_data_backup
 # influxdb data dir:
 VOLUME ["/var/easydeploy/share"]
 
+# Grafana sqlite3 directory:
+# TODO: VOLUME ["/var/lib/grafana"]
+
 # ---------------- #
 #   Expose Ports   #
 # ---------------- #
@@ -110,6 +115,9 @@ EXPOSE	8086
 
 # InfluxDB HTTPS API
 EXPOSE	8084
+
+# Grafana server
+EXPOSE 3000
 
 # -------- #
 #   Run!   #
