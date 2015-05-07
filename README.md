@@ -24,4 +24,11 @@ Regarding cloudwatch-to-graphite and its `leadbutt` command-line:
   * AWS Credentials are supposed to be provided via env variables, for example:
     `docker run -e AWS_ACCESS_KEY_ID=xxxx -e AWS_SECRET_ACCESS_KEY=yyyy ...` (see `./start`) - in the case of AWS Elastic Beanstalk you can set them in you environment's configuration UI
 
+### Other
+
+See `utils/leadbutt2influxdb.clj` for a utility that can convert leadbutt output
+to InfluxDB input. You might want to copy and modify the leadbutt configuration
+file to fetch the last 2 weeks of hourly data (`Period: 60; Count: 336`), use
+the utility to convert it and post to InfluxDB.
+
 [1]: https://github.com/kamon-io/docker-grafana-influxdb
